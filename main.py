@@ -27,28 +27,33 @@ def display_image_info(image: np.ndarray) -> None:
 def plot_histogram(image: np.ndarray) -> None:
     """
     Строит и отображает гистограмму интенсивностей пикселей
-    :param image: Многомерный массив NumPy, представляющий изображение в оттенках серого
+    :param image: Многомерный массив NumPy, представляющий изображение.
     """
     try:
+        colors = ('b', 'g', 'r')
         plt.figure(figsize=(10, 5))
-        plt.hist(image.ravel(), 256, [0, 256], color='gray')
-        plt.title("Гистограмма изображения")
-        plt.xlabel("Интенсивность пикселей")
-        plt.ylabel("Количество пикселей")
-        plt.show()
+        for i, color in enumerate(colors):
+            hist = cv2.calcHist([image], [i], None, [256], [0, 256])
+            plt.plot(hist, color=color)
+            plt.xlim([0, 256])
+        plt.title("Image Histogram")
+        plt.xlabel("Intensity")
+        plt.ylabel("Frequency")
+        plt.legend(['Blue', 'Green', 'Red'])
+        plt.show()    
     except Exception as e:
         print(f"Ошибка при построении гистограммы: {e}")
 
 def binarize_image(image: np.ndarray, threshold: int) -> np.ndarray:
     """
     Бинаризует изображение с заданным порогом
-    :param image: Массив NumPy, представляющий изображение в оттенках серого.
+    :param image: Массив NumPy, представляющий изображение.
            threshold: Целочисленное значение порога для бинаризации
     :return: Бинаризованное изображение
     """
     if image is None:
         raise ValueError("Ошибка: изображение не загружено.")
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
     _, binary_image = cv2.threshold(gray_image, threshold, 255, cv2.THRESH_BINARY)
     return binary_image
 
@@ -64,7 +69,7 @@ def display_images(original: np.ndarray, binary: np.ndarray) -> None:
     plt.figure(figsize=(12, 6))
     
     plt.subplot(1, 2, 1)
-    plt.imshow(original)
+    plt.imshow(cv2.cvtColor(original, cv2.COLOR_BGR2RGB))
     plt.title("Исходное изображение")
     plt.axis("off")
     
