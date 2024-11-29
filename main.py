@@ -11,15 +11,8 @@ def create_dataframe(data_path: str) -> pd.DataFrame:
     :param data_path: Путь к директории, в которой находятся изображения.
     :return pd.DataFrame: Pandas DataFrame с двумя столбцами absolute_path и relative_path.
     """
-    file_paths = []
-    for root, _, files in os.walk(data_path):
-        for file in files:
-            if file.lower().endswith(('.png', '.jpg', '.jpeg')):
-                abs_path = os.path.join(root, file)
-                rel_path = os.path.relpath(abs_path, data_path)
-                file_paths.append((abs_path, rel_path))
-    
-    df = pd.DataFrame(file_paths, columns=['absolute_path', 'relative_path'])
+    df = pd.read_csv(data_path)
+    df.columns=['absolute_path','real_path']
     return df
 
 def add_image_info(df: pd.DataFrame) -> pd.DataFrame:
